@@ -1,7 +1,7 @@
 /* lib.h librería con las funciones equivalentes a las
 de <string.h> y las funciones y estructuras para el
 manejo de una pila */
-
+#include<stdio.h>
 #include <fcntl.h>     /* Modos de apertura de función open()*/
 #include <stdlib.h>    /* Funciones malloc(), free(), y valor NULL */
 #include <sys/stat.h>  /* Permisos función open() */
