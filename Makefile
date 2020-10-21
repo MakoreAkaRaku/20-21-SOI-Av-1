@@ -2,10 +2,11 @@ CC=gcc # compilador
 CFLAGS=-c -g -Wall -std=c99 #flags para el compilador
 LDFLAGS= #flags para enlazador
 
-SOURCES=my_lib.c test1a.c test1b.c test2a.c test2b.c
+SOURCES=my_lib.c test1.c test2a.c test2b.c
 LIBRARIES=my_lib.o 
 INCLUDES=my_lib.h
-PROGRAMS=test1a test1b test2a test2b
+PROGRAMS=test1 test2a test2b
+
 OBJS=$(SOURCES:.c=.o)
 
 all: $(OBJS) $(PROGRAMS)
@@ -13,15 +14,12 @@ all: $(OBJS) $(PROGRAMS)
 #$(PROGRAMS): $(LIBRARIES) $(INCLUDES)
 #	$(CC) $(LDFLAGS) $(LIBRARIES) $@.o -o $@
 
-test1a: test1a.o $(LIBRARIES) $(INCLUDES)
-	$(CC) $(LDFLAGS) $(LIBRARIES) $< -o $@
-
-test1b: test1b.o $(LIBRARIES) $(INCLUDES)
+test1: test1.o $(LIBRARIES) $(INCLUDES)
 	$(CC) $(LDFLAGS) $(LIBRARIES) $< -o $@
 
 test2a: test2a.o $(LIBRARIES) $(INCLUDES)
 	$(CC) $(LDFLAGS) $(LIBRARIES) $< -o $@
-
+	
 test2b: test2b.o $(LIBRARIES) $(INCLUDES)
 	$(CC) $(LDFLAGS) $(LIBRARIES) $< -o $@
 
