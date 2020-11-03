@@ -1,8 +1,8 @@
 #include "my_lib.h"
-
+/*
 int main(){
     void *data;
-    struct my_stack  *st = my_stack_init(1);
+    struct my_stack  *st = my_stack_init(21);
     my_stack_push(st,data);
     my_stack_push(st,data);
     int l = my_stack_len(st);
@@ -10,7 +10,7 @@ int main(){
     l = my_stack_purge(st);
     printf("Bytes erased: %d\n", l);
 }
-
+*/
 size_t my_strlen(const char *str){
     size_t size = 0;
     while (*(str++)){
@@ -39,8 +39,8 @@ int my_strcmp(const char *str1, const char *str2){
 }
 
 char *my_strncpy(char *dest, const char *src, size_t n){
-    size_t i = 0;
-    for (i; i < n && *(src + i) != '\0'; i++){
+    size_t i;
+    for (i = 0; i < n && *(src + i) != '\0'; i++){
         *(dest + i) = *(src + i);
     }
     while (i < n){
@@ -114,31 +114,88 @@ int get_stack_len(struct my_stack_node *node){
 int my_stack_len(struct my_stack *stack){
     if (!stack){
         puts("Error: la pila no está inicializada");
-        return NULL;
+        return -1;
     }
     int stackLen = get_stack_len(stack->first);
     return stackLen;
-}
-
-void *get_Something(){
-
 }
 
 int my_stack_purge(struct my_stack *stack){
     int result = 0;
     if (!stack){
         puts("Error: la pila no está inicializada");
-        return NULL;
+        return -1;
     } else{
-        int size = sizeof(struct my_stack_node);
+        void *dataPointer;
+        int nodeSize = sizeof(struct my_stack_node);
         struct my_stack_node *node = stack->first;
         while (node){
-            my_stack_pop(stack);
+            dataPointer = my_stack_pop(stack);
             node = stack->first;
-            result += size;
+            free(dataPointer);
+            result += stack->size;
+            result += nodeSize;
         }
         free(stack);
         result += sizeof(struct my_stack);
     }
     return result;
+}
+
+struct my_stack *my_stack_read(char *filename){
+    int fd = open(filename, O_RDONLY);
+    printf("%d", fd);
+    if (fd > 0){
+        int size;
+        if(read(fd,&size,sizeof(int))> 0){
+            struct my_stack *newStack = my_stack_init(size);
+            void *dataPointer = malloc(size);
+            while (read(fd,dataPointer,size)>0){
+                my_stack_push(newStack,dataPointer);
+                dataPointer = malloc(size);
+            }
+            free(dataPointer);
+            if (close(fd) < 0) {
+                puts("Error: el archivo no pudo ser cerrado");
+                return NULL;
+            }
+            return newStack;
+        }else{
+            puts("Error: no contiene nada el archivo");
+            return NULL;
+        }   
+    }else{
+        puts("Error: El archivo no se pudo leer");
+        return NULL;
+    }
+}
+
+int write_nodes(int fileID,int size, struct my_stack_node *node){
+    int totalSize = 0;
+    if (!node){
+        return totalSize;
+    }
+    totalSize = write_nodes(fileID ,size, node->next);
+    write(fileID,node->data,size);
+    return totalSize + 1;
+}
+
+int my_stack_write(struct my_stack *stack, char *filename){
+    if (!stack){
+        puts("Error: la pila no esta inicializada");
+        return -1;
+    }
+    int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+    if (fd > 0){
+        write(fd,&stack->size,sizeof(int));
+        int nNodes = write_nodes(fd,stack->size,stack->first);
+        if(close(fd) < 0){
+            puts("Error: el archivo no pudo ser cerrado");
+            return -1;
+        }
+        return nNodes;
+    }else{
+        puts("Error: no se pudo escribir en el file");
+        return -1;
+    }   
 }
