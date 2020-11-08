@@ -4,8 +4,8 @@ manejo de una pila */
 
 #include <stdio.h>      /* para printf en depurarión */
 #include <string.h>    /* para funciones de strings  */
-#include <fcntl.h>     /* Modos de apertura de función open()*/
 #include <stdlib.h>    /* Funciones malloc(), free(), y valor NULL */
+#include <fcntl.h>     /* Modos de apertura de función open()*/
 #include <sys/stat.h>  /* Permisos función open() */
 #include <sys/types.h> /* Definiciones de tipos de datos como size_t*/
 #include <unistd.h>    /* Funciones read(), write(), close()*/
@@ -27,7 +27,7 @@ struct my_stack_node {      // nodo de la pila (elemento)
 
 struct my_stack {   // pila
     int size;       // tamaño de data, nos lo pasarán por parámetro
-    struct my_stack_node *first;  // apunta al nodo de la parte superior
+    struct my_stack_node *top;  // apunta al nodo de la parte superior
 };  
 
 //declaraciones funciones gestor de pila
@@ -37,4 +37,4 @@ void *my_stack_pop(struct my_stack *stack);
 int my_stack_len(struct my_stack *stack);
 struct my_stack *my_stack_read(char *filename);
 int my_stack_write(struct my_stack *stack, char *filename);
-int my_stack_purge(struct my_stack *stack);
+int my_stack_purge(struct my_stack *stack);     

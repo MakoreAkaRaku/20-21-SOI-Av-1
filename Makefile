@@ -1,6 +1,6 @@
 CC=gcc # compilador
 CFLAGS=-c -g -Wall -std=c99 #flags para el compilador
-LDFLAGS=#flags para enlazador
+LDFLAGS= #flags para enlazador
 
 SOURCES=my_lib.c test1.c test2a.c test2b.c
 LIBRARIES=my_lib.o 

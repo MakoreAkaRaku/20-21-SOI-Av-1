@@ -70,8 +70,8 @@ int main() {
     printf("s2 length: %d\n\n", len2);
 
 
-    // Write the larger stack first
-    puts("Writting the larger stack first (s2) in the file \"/tmp/my_stack.data\".");
+    // Write the larger stack top
+    puts("Writting the larger stack top (s2) in the file \"/tmp/my_stack.data\".");
     if (my_stack_write(s2, "/tmp/my_stack.data") <= 0) {
         puts("Error in my_stack_write (s2)");
         exit(EXIT_FAILURE);

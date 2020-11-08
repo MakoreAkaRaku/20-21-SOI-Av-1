@@ -1,8 +1,10 @@
+//Marc Roman Colom, Laura Cavero Loza y Daniel Sastre Carrasco
 #include "my_lib.h"
-/**
+                      /**
  * Retorna la longitud de l'string passat per punter
  */
-size_t my_strlen(const char *str){
+                      size_t
+                      my_strlen(const char *str){
     size_t size = 0;
     while (*(str++)){   //Mentres no es detecti el caracter \0 suma 1 a size
         size++;
@@ -70,12 +72,12 @@ struct my_stack *my_stack_init(int size){
         return NULL;
     }
     newStackPile->size = size;
-    newStackPile->first = NULL;
+    newStackPile->top = NULL;
     return newStackPile;
 }
 
 /**
- * Crea un node dins la pila que apunta a dades.
+ * Crea un node dins la pila que apunta a dades. Retorna EXIT_SUCCESS si l'operacio ha anat be, EXIT_FAILURE en cas contrari
  * */
 int my_stack_push(struct my_stack *stack, void *data){
     if (stack!=NULL && stack->size > 0){
@@ -85,8 +87,8 @@ int my_stack_push(struct my_stack *stack, void *data){
             return EXIT_FAILURE;
         }
         newNode->data = data;
-        newNode->next = stack->first;
-        stack->first = newNode;
+        newNode->next = stack->top;
+        stack->top = newNode;
     }else{
         puts("Error: no existe el stack o el tamaño del dato es menor o igual a 0");
         return EXIT_FAILURE;
@@ -98,16 +100,18 @@ int my_stack_push(struct my_stack *stack, void *data){
  * Elimina el node que hi ha damunt la pila i retorna el punter de dades d'aquest.
  * */
 void *my_stack_pop(struct my_stack *stack){
-    if (!stack->first){
-        return NULL;
+    if (!stack){
+        puts("Error: la pila no esta inicializada");
+    }else if (!stack->top){
     }else{
         void *dataPointer;
-        struct my_stack_node *nodePointer = stack->first;
+        struct my_stack_node *nodePointer = stack->top;
         dataPointer = nodePointer->data;
-        stack->first = nodePointer->next;
+        stack->top = nodePointer->next;
         free(nodePointer);
         return dataPointer;
     }
+    return NULL;
 }
 /**
  * Funcio recursiva auxiliar que cerca el node que apunta a null.
@@ -128,7 +132,7 @@ int my_stack_len(struct my_stack *stack){
         puts("Error: la pila no está inicializada");
         return -1;
     }
-    int stackLen = get_stack_len(stack->first);
+    int stackLen = get_stack_len(stack->top);
     return stackLen;
 }
 /**
@@ -143,10 +147,10 @@ int my_stack_purge(struct my_stack *stack){
     } else{
         void *dataPointer;
         int nodeSize = sizeof(struct my_stack_node);
-        struct my_stack_node *node = stack->first;
+        struct my_stack_node *node = stack->top;
         while (node){
             dataPointer = my_stack_pop(stack);
-            node = stack->first;
+            node = stack->top;
             free(dataPointer);
             result += stack->size;
             result += nodeSize;
@@ -207,14 +211,15 @@ int write_nodes(int fileID,int size, struct my_stack_node *node){
  * Escriu la pila dins el fitxer; retorna el nombre de nodes escrits dins la pila.
  * */
 int my_stack_write(struct my_stack *stack, char *filename){
-    if (!stack){        //Si la pila no esta inicialitzada, retorna error.
+    if (!stack){                                                    //Si la pila no esta inicialitzada, retorna error.
         puts("Error: la pila no esta inicializada");
         return -1;
     }
     int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-    if (fd > 0){    //Si s'ha pogut obrir el fitxer, escriu el tamany de la pila dins el fitxer.
+    if (fd > 0){                                                    //Si s'ha pogut obrir el fitxer, escriu el tamany de la pila dins el fitxer.
         write(fd,&stack->size,sizeof(int));
-        int nNodes = write_nodes(fd,stack->size,stack->first);  //Escriu els nodes dins el fitxer en ordre del primer ficat a la pila fins el darrer ficat.
+        int nNodes = write_nodes(fd, stack->size, stack->top);      //Escriu els nodes dins el fitxer en ordre
+                                                                    //del primer ficat a la pila fins el darrer ficat.
         if(close(fd) < 0){
             puts("Error: el archivo no pudo ser cerrado");
             return -1;
